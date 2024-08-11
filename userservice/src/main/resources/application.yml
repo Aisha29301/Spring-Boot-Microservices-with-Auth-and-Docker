@@ -1,6 +1,6 @@
 spring:
   application:
-    name: user-service
+    name: USER-SERVICE
 
 eureka:
   client:
@@ -8,8 +8,6 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://service-registry:8761/eureka/
-  instance:
-    hostname: service-registry
 
 server:
   port: 8081

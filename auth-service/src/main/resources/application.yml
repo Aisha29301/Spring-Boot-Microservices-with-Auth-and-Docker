@@ -3,16 +3,15 @@ spring:
     name: auth-service
   data:
     mongodb:
-      uri: mongodb://mongodb:27017/microservices
-#      uri: mongodb://mongo:mongo@localhost:27017/microservices
+#      uri: mongodb://localhost:27017/microservices
+      uri: mongodb://mongo:mongo@mongodb:27017/microservices?authSource=admin
+
 eureka:
   client:
     register-with-eureka: true
     fetch-registry: true
     service-url:
       defaultZone: http://service-registry:8761/eureka/
-  instance:
-    hostname: service-registry
 
 server:
   port: 8082

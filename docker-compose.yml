@@ -3,6 +3,7 @@ version: '3.8'
 services:
   mongodb:
     image: mongo
+    container_name: mongodb
     ports:
       - "27017:27017"
     volumes:
@@ -14,55 +15,46 @@ services:
       - my-network
 
   service-registry:
-    image: docker-service-registry:latest
-    build:
-      context: ./service-registry
+    image: docker-service-registry:1
+    container_name: service-registry
     ports:
       - "8761:8761"
     networks:
       - my-network
 
-  auth-service:
-    image: docker-auth-service:latest
-    build:
-      context: ./auth-service
-    ports:
-      - "8082:8082"
-    networks:
-      - my-network
-    environment:
-      SPRING_DATA_MONGODB_URI: mongodb://mongo:mongo@mongodb:27017/auth-service
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka/
-    depends_on:
-      - mongodb
-      - service-registry
-
+  
   cloud-gateway:
-    image: docker-cloud-gateway:latest
-    build:
-      context: ./cloud-gateway
+    image: docker-cloud-gateway:1
+    container_name: cloud-gateway
     ports:
       - "8080:8080"
     networks:
       - my-network
-    environment:
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka/
     depends_on:
-      - auth-service
       - service-registry
+      - auth-service
+      - mongodb
+      - user-service
 
-  userservice:
-    image: docker-user-service:latest
-    build:
-      context: ./userservice
+  auth-service:
+    image: docker-auth-service:1
+    container_name: auth-service
+    ports:
+      - "8082:8082"
+    networks:
+      - my-network
+    depends_on:
+      - service-registry
+      - mongodb
+
+  user-service:
+    image: docker-user-service:1
+    container_name: user-service
     ports:
       - "8081:8081"
     networks:
       - my-network
-    environment:
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka/
     depends_on:
-      - auth-service
       - service-registry
 
 networks:
